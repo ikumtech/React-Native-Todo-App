@@ -1,6 +1,15 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "typeRoots": ["./node_modules/@types", "./theme"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@context/*": ["context/*"],
+      "@theme/*": ["theme/*"],
+      "@assets/*": ["assets/*"]
+    }
+  },
+  "include": ["theme/styled.d.ts", "index.ts", "App.tsx", "app", "components"]
 }

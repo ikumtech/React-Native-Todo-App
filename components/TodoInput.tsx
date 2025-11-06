@@ -25,11 +25,12 @@ const TodoInput: React.FC<Props> = ({ value, onChangeText, onSubmit }) => {
 
 export default TodoInput;
 
+/* Styles */
 const InputContainer = styled.View`
-  background-color: ${(props) => props.theme.inputBackground};
-  padding: 18px 20px;
+  background-color: ${(props) => props.theme.itemBackground};
+  padding: 16px 20px;
   border-radius: 6px;
-  margin: 20px;
+  margin-bottom: 20px;
 `;
 
 const StyledInput = styled.TextInput`

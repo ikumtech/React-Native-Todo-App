@@ -1,6 +1,13 @@
 // context/ThemeContext.tsx
-import React, { createContext, useContext, useState } from 'react';
-import { ThemeProvider as StyledThemeProvider } from 'styled-components/native'; // ✅ native, not just styled-components
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  FC,
+} from 'react';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 import { lightTheme, darkTheme } from '../theme/theme';
 
 type ThemeMode = 'light' | 'dark';
@@ -17,18 +24,23 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const useThemeContext = () => useContext(ThemeContext);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// ✅ Explicitly type props with `children`
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const [mode, setMode] = useState<ThemeMode>('light');
 
   const toggleTheme = () => {
-    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
   };
 
   const theme = mode === 'light' ? lightTheme : darkTheme;
 
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <StyledThemeProvider theme={theme}> {/* ✅ THIS IS KEY */}
+      <StyledThemeProvider theme={theme}>
         {children}
       </StyledThemeProvider>
     </ThemeContext.Provider>

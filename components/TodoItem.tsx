@@ -2,71 +2,97 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { TouchableOpacity } from 'react-native';
+import { useMutation } from 'convex/react';
+import { api } from '../convex/_generated/api';
 
 interface Props {
-  id: string;
-  title: string;
-  completed: boolean;
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
+  todo: {
+    _id: string;
+    title: string;
+    completed: boolean;
+  };
+  onLongPress?: () => void; // needed for drag-and-drop
 }
 
-const TodoItem: React.FC<Props> = ({ id, title, completed, onToggle, onDelete }) => {
+export default function TodoItem({ todo, onLongPress }: Props) {
+  const toggle = useMutation(api.functions.toggleTodo);
+  const remove = useMutation(api.functions.deleteTodo);
+
+  const handleToggle = () => {
+    toggle({ id: todo._id, completed: !todo.completed });
+  };
+
+  const handleDelete = () => {
+    remove({ id: todo._id });
+  };
+
   return (
-    <ItemContainer>
-      <TouchableOpacity onPress={() => onToggle(id)}>
-        <Checkbox completed={completed}>
-          {completed && <CheckMark>✓</CheckMark>}
+    <Row onLongPress={onLongPress}>
+      <LeftSection onPress={handleToggle}>
+        <Checkbox completed={todo.completed}>
+          {todo.completed && <Checkmark>✓</Checkmark>}
         </Checkbox>
-      </TouchableOpacity>
 
-      <ItemText completed={completed}>{title}</ItemText>
+        <Title completed={todo.completed}>{todo.title}</Title>
+      </LeftSection>
 
-      <TouchableOpacity onPress={() => onDelete(id)}>
-        <DeleteText>✕</DeleteText>
-      </TouchableOpacity>
-    </ItemContainer>
+      <DeleteButton onPress={handleDelete}>
+        <DeleteText>×</DeleteText>
+      </DeleteButton>
+    </Row>
   );
-};
+}
 
-export default TodoItem;
+/* --- Styles --- */
 
-const ItemContainer = styled.View`
+const Row = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
-  background-color: ${(props) => props.theme.inputBackground};
-  padding: 16px;
+  justify-content: space-between;
+  padding: 14px 12px;
+  background-color: ${(props) => props.theme.itemBackground};
   border-bottom-width: 1px;
-  border-bottom-color: ${(props) => props.theme.textSecondary};
+  border-bottom-color: ${(props) => props.theme.border || '#333'};
+`;
+
+const LeftSection = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
 `;
 
 const Checkbox = styled.View<{ completed: boolean }>`
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  border: 2px solid ${(props) => props.theme.primary};
-  align-items: center;
-  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50px;
+  border-width: 2px;
+  border-color: ${(props) =>
+    props.completed ? props.theme.primary : props.theme.textSecondary};
   background-color: ${(props) =>
     props.completed ? props.theme.primary : 'transparent'};
-  margin-right: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
 `;
 
-const CheckMark = styled.Text`
+const Checkmark = styled.Text`
   color: white;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
 `;
 
-const ItemText = styled.Text<{ completed: boolean }>`
-  flex: 1;
+const Title = styled.Text<{ completed: boolean }>`
+  color: ${(props) => props.theme.text};
   font-size: 16px;
-  color: ${(props) =>
-    props.completed ? props.theme.textSecondary : props.theme.text};
   text-decoration-line: ${(props) => (props.completed ? 'line-through' : 'none')};
+  opacity: ${(props) => (props.completed ? 0.5 : 1)};
+`;
+
+const DeleteButton = styled.TouchableOpacity`
+  padding: 8px;
 `;
 
 const DeleteText = styled.Text`
-  color: red;
-  font-size: 16px;
-  padding-left: 12px;
+  color: ${(props) => props.theme.textSecondary};
+  font-size: 20px;
 `;

@@ -1,13 +1,19 @@
 // App.tsx
+import React from 'react';
+import { ConvexProvider } from 'convex/react';
+import { convex } from './client';
 import { ThemeProvider } from './context/ThemeContext';
-import { Slot } from 'expo-router';
-import styled from 'styled-components/native'; // ✅ not just styled-components
+import HomeScreen from './app/index'; // or wherever your main screen is
+ // or your main navigation/root screen component
 
-
-export default function App() {
+const App = () => {
   return (
-    <ThemeProvider> {/* ✅ Wrap all content with ThemeProvider */}
-      <Slot />
-    </ThemeProvider>
+    <ConvexProvider client={convex}>
+      <ThemeProvider>
+        <HomeScreen />
+      </ThemeProvider>
+    </ConvexProvider>
   );
-}
+};
+
+export default App;

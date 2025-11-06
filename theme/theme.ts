@@ -1,17 +1,15 @@
 export const lightTheme = {
   background: '#fafafa',
+  itemBackground: '#fff',
   text: '#111',
-  textSecondary: '#777',
-  primary: '#3a7bfd',
-  itemBackground: '#ffffff',
-  inputBackground: '#f0f0f0',
+  textSecondary: '#999',
+  primary: '#4a5cff',
 };
 
 export const darkTheme = {
-  background: '#181824',
-  text: '#fafafa',
-  textSecondary: '#888',
-  primary: '#3a7bfd',
+  background: '#181824',       // ← this value affects the bottom white area
   itemBackground: '#25273c',
-  inputBackground: '#333',
+  text: '#fafafa',
+  textSecondary: '#777',
+  primary: '#8c94fc',
 };

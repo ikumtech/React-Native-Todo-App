@@ -1,97 +1,71 @@
-// app/index.tsx
 import React, { useState } from 'react';
-import { FlatList, ImageBackground } from 'react-native';
+import { ScrollView, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
-import TodoInput from '../components/TodoInput';
-import TodoItem from '../components/TodoItem';
 import { useThemeContext } from '../context/ThemeContext';
+import TodoInput from '../components/TodoInput';
+import TodoList from '../components/TodoList';
+import FilterTabs from '../components/FilterTabs';
 
-interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-}
+
+
 
 export default function HomeScreen() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [input, setInput] = useState('');
   const { toggleTheme, mode } = useThemeContext();
-
-  const handleAddTodo = () => {
-    if (!input.trim()) return;
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      title: input,
-      completed: false,
-    };
-    setTodos([newTodo, ...todos]);
-    setInput('');
-  };
-
-  const handleToggle = (id: string) => {
-    setTodos((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  const handleDelete = (id: string) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  };
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   return (
-    <ImageBackground
-      source={
-        mode === 'dark'
-          ? require('../assets/dark-bg.jpg')
-          : require('../assets/light-bg.jpg')
-      }
-      resizeMode="cover"
-      style={{ flex: 1 }}
-    >
-      <Container>
-        <HeaderRow>
-          <Title>TODO</Title>
-          <ThemeButton onPress={toggleTheme}>
-            <ThemeIcon>{mode === 'light' ? '🌙' : '☀️'}</ThemeIcon>
-          </ThemeButton>
-        </HeaderRow>
+    <ScrollView style={{ flex: 1 }}>
+      <ImageHeader
+        source={
+          mode === 'dark'
+            ? require('../assets/dark-bg.jpg')
+            : require('../assets/light-bg.jpg')
+        }
+        resizeMode="cover"
+      >
+        <MaxWidthWrapper>
+          <HeaderRow>
+            <Title>TODO</Title>
+            <ThemeButton onPress={toggleTheme}>
+              <ThemeIcon>{mode === 'light' ? '🌙' : '☀️'}</ThemeIcon>
+            </ThemeButton>
+          </HeaderRow>
+          
+          <TodoInput />
+        </MaxWidthWrapper>
+      </ImageHeader>
 
-        <ContentCard>
-          <TodoInput
-            value={input}
-            onChangeText={setInput}
-            onSubmit={handleAddTodo}
-          />
-
-          <FlatList
-            data={todos}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TodoItem
-                id={item.id}
-                title={item.title}
-                completed={item.completed}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-              />
-            )}
-            ListEmptyComponent={
-              <EmptyText>No todos yet. Add one!</EmptyText>
-            }
-            contentContainerStyle={{ paddingBottom: 30 }}
-          />
-        </ContentCard>
-      </Container>
-    </ImageBackground>
+      <ThemeSection>
+        <MaxWidthWrapper>
+          <ContentCard>
+            <TodoList filter={filter} />
+            <FooterRow>
+              <FilterTabs currentFilter={filter} setFilter={setFilter} />
+              <HintText>Drag and drop to reorder list</HintText>
+            </FooterRow>
+          </ContentCard>
+        </MaxWidthWrapper>
+      </ThemeSection>
+    </ScrollView>
   );
 }
 
+const ImageHeader = styled.ImageBackground`
+  padding-top: 60px;
+  padding-bottom: 24px;
+  padding-horizontal: 24px;
+`;
 
-const Container = styled.SafeAreaView`
+const ThemeSection = styled.View`
   flex: 1;
-  padding: 24px;
+  background-color: ${(props) => props.theme.background};
+  padding: 24px 16px 60px;
+`;
+
+const MaxWidthWrapper = styled.View`
+  width: 100%;
+  max-width: 600px;
+  align-self: center;
 `;
 
 const HeaderRow = styled.View`
@@ -118,10 +92,7 @@ const ContentCard = styled.View`
   background-color: ${(props) => props.theme.itemBackground};
   border-radius: 10px;
   padding: 12px;
-  margin: 0 8px;
-  max-width: 600px;
-  align-self: center;
-  width: 100%;
+  margin-top: 20px;
   shadow-color: #000;
   shadow-offset: 0px 2px;
   shadow-opacity: 0.25;
@@ -129,8 +100,13 @@ const ContentCard = styled.View`
   elevation: 4;
 `;
 
-const EmptyText = styled.Text`
-  text-align: center;
+const FooterRow = styled.View`
+  margin-top: 20px;
+  align-items: center;
+`;
+
+const HintText = styled.Text`
   color: ${(props) => props.theme.textSecondary};
-  padding: 20px;
+  margin-top: 12px;
+  font-size: 13px;
 `;

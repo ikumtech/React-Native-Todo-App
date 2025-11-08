@@ -1,55 +1,104 @@
-import React from "react";
-import styled from "styled-components/native";
-import DraggableFlatList, {
-  RenderItemParams,
-} from "react-native-draggable-flatlist";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../convex/_generated/api";
-import TodoItem from "./TodoItem";
+import React from 'react';
+import { FlatList } from 'react-native';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../convex/_generated/api';
+import TodoItem from './TodoItem';
+import styled from 'styled-components/native';
+import FilterTabs from './FilterTabs';
 
 interface Props {
-  filter: "all" | "active" | "completed";
+  filter: 'all' | 'active' | 'completed';
+  setFilter?: (filter: 'all' | 'active' | 'completed') => void;
 }
 
-export default function TodoList({ filter }: Props) {
+export default function TodoList({ filter, setFilter }: Props) {
   const todos = useQuery(api.functions.getTodos);
-  const reorder = useMutation(api.functions.reorderTodos);
+  const clearCompleted = useMutation(api.functions.clearCompletedTodos);
 
   if (todos === undefined) {
     return <CenteredText>Loading todos...</CenteredText>;
   }
 
-  // Filter logic remains the same ✅
   const filtered = todos.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
     return true;
   });
 
-  if (filtered.length === 0) {
-    return <CenteredText>No todos match this filter!</CenteredText>;
-  }
-
-  const renderItem = ({ item, drag }: RenderItemParams<typeof filtered[0]>) => (
-    <TodoItem todo={item} onLongPress={drag} />
-  );
+  const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
   return (
-    <DraggableFlatList
-      data={filtered}
-      keyExtractor={(item) => item._id}
-      renderItem={renderItem}
-      onDragEnd={({ data }) => {
-        const orderedIds = data.map((todo) => todo._id);
-        reorder({ orderedIds });
-      }}
-      contentContainerStyle={{ paddingBottom: 12 }}
-    />
+    <>
+      {filtered.length === 0 ? (
+        <CenteredText>No todos match this filter!</CenteredText>
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => <TodoItem todo={item} />}
+        />
+      )}
+
+      {/* Bottom Controls Row */}
+      <BottomRow>
+        <ItemsLeftText>
+          {itemsLeft} item{itemsLeft !== 1 ? 's' : ''} left
+        </ItemsLeftText>
+
+        {setFilter && (
+          <FiltersWrapper>
+            <FilterTabs currentFilter={filter} setFilter={setFilter} />
+          </FiltersWrapper>
+        )}
+
+        <ClearButton onPress={() => clearCompleted()}>
+          <ClearButtonText>Clear Completed</ClearButtonText>
+        </ClearButton>
+      </BottomRow>
+    </>
   );
 }
+
+/* --- Styled Components --- */
 
 const CenteredText = styled.Text`
   text-align: center;
   padding: 20px;
   color: ${(props) => props.theme.textSecondary};
+`;
+
+const BottomRow = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+`;
+
+const ItemsLeftText = styled.Text`
+  font-size: 14px;
+  color: ${(props) => props.theme.textSecondary};
+  flex: 1;
+`;
+
+const FiltersWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const ClearButton = styled.Pressable`
+  flex: 1;
+  align-items: flex-end;
+`;
+
+const ClearButtonText = styled.Text`
+  font-size: 14px;
+  color: ${(props) => props.theme.textSecondary};
+  transition: color 0.2s ease;
+
+  /* Hover style for web */
+  ${ClearButton}:hover & {
+    color: #4f46e5;
+  }
 `;

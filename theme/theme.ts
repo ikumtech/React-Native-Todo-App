@@ -7,7 +7,7 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
-  background: '#181824',       // ← this value affects the bottom white area
+  background: '#181824',       
   itemBackground: '#25273c',
   text: '#fafafa',
   textSecondary: '#777',

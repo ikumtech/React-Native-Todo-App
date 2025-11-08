@@ -1,52 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 
 interface Props {
-  currentFilter: string;
+  currentFilter: 'all' | 'active' | 'completed';
   setFilter: (filter: 'all' | 'active' | 'completed') => void;
 }
 
-export default function FilterTabs({ currentFilter, setFilter }: Props) {
-  return (
-    <TabsWrapper>
-      <TabButton
-        active={currentFilter === 'all'}
-        onPress={() => setFilter('all')}
-      >
-        <TabText active={currentFilter === 'all'}>All</TabText>
-      </TabButton>
-      <TabButton
-        active={currentFilter === 'active'}
-        onPress={() => setFilter('active')}
-      >
-        <TabText active={currentFilter === 'active'}>Active</TabText>
-      </TabButton>
-      <TabButton
-        active={currentFilter === 'completed'}
-        onPress={() => setFilter('completed')}
-      >
-        <TabText active={currentFilter === 'completed'}>Completed</TabText>
-      </TabButton>
-    </TabsWrapper>
-  );
-}
+const filters: Array<'all' | 'active' | 'completed'> = ['all', 'active', 'completed'];
 
-const TabsWrapper = styled.View`
+const FilterTabs: React.FC<Props> = ({ currentFilter, setFilter }) => {
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  return (
+    <FilterTabsContainer>
+      {filters.map((filter) => (
+        <FilterButton
+          key={filter}
+          onPress={() => setFilter(filter)}
+          onHoverIn={() => setHovered(filter)}
+          onHoverOut={() => setHovered(null)}
+        >
+          <FilterText
+            isActive={currentFilter === filter}
+            isHovered={hovered === filter}
+          >
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </FilterText>
+        </FilterButton>
+      ))}
+    </FilterTabsContainer>
+  );
+};
+
+export default FilterTabs;
+
+// STYLES
+const FilterTabsContainer = styled.View`
   flex-direction: row;
   justify-content: center;
-  gap: 20px;
-  padding: 16px 0;
+  gap: 16px;
 `;
 
-const TabButton = styled.TouchableOpacity<{ active: boolean }>`
-  padding: 4px 8px;
-`;
+const FilterButton = styled.Pressable``;
 
-const TabText = styled.Text<{ active: boolean }>`
-  color: ${(props) =>
-    props.active
-      ? props.theme.primaryText || '#4a5cff'
-      : props.theme.textSecondary || '#aaa'};
-  font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
-  font-size: 16px;
+const FilterText = styled.Text<{ isActive: boolean; isHovered: boolean }>`
+  font-size: 14px;
+  font-weight: ${({ isActive }) => (isActive ? 'bold' : 'normal')};
+  color: ${({ isActive, isHovered }) =>
+    isActive || isHovered ? '#4F46E5' : '#999'};
 `;

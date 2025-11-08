@@ -24,7 +24,7 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const useThemeContext = () => useContext(ThemeContext);
 
-// ✅ Explicitly type props with `children`
+
 interface ThemeProviderProps {
   children: ReactNode;
 }

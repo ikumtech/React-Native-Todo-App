@@ -3,8 +3,7 @@ import React from 'react';
 import { ConvexProvider } from 'convex/react';
 import { convex } from './client';
 import { ThemeProvider } from './context/ThemeContext';
-import HomeScreen from './app/index'; // or wherever your main screen is
- // or your main navigation/root screen component
+import HomeScreen from './app/index'; 
 
 const App = () => {
   return (
@@ -17,3 +16,5 @@ const App = () => {
 };
 
 export default App;
+
+**//

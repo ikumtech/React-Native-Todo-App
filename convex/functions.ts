@@ -10,12 +10,12 @@ export const getTodos = query({
 export const createTodo = mutation({
   args: {
     title: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()), 
   },
   handler: async (ctx, args) => {
     await ctx.db.insert('todos', {
       title: args.title,
-      description: args.description,
+      description: args.description ?? '', 
       completed: false,
       createdAt: Date.now(),
       order: Date.now(),

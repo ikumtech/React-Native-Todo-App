@@ -1,6 +1,7 @@
+// app/_layout.tsx
 import { Slot } from 'expo-router';
 import { ConvexProvider } from 'convex/react';
-import convex from '../client'; // ✅ points to /client.ts
+import { convex } from '../client'; 
 import { ThemeProvider } from '../context/ThemeContext';
 
 export default function RootLayout() {

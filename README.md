@@ -1,10 +1,10 @@
-# 📝 Todo App (React Native + Convex + Expo)
+#  Todo App (React Native + Convex + Expo)
 
 A clean and responsive Todo List app with light/dark mode, real-time database using Convex, and mobile/web support via Expo. Styled to match the provided Figma design.
 
 ---
 
-## ✨ Features
+##  Features
 
 - ✅ Add, complete, and delete todos
 - ✅ Light & dark theme toggle 🌗
@@ -16,7 +16,7 @@ A clean and responsive Todo List app with light/dark mode, real-time database us
 Link to the sites
 ---
 
-## 🧱 Tech Stack
+##  Tech Stack
 
 - [React Native](https://reactnative.dev/)
 - [Expo](https://expo.dev/)
@@ -26,7 +26,7 @@ Link to the sites
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Clone the Repository
 
@@ -143,11 +143,3 @@ MIT License
 
 Built by Ikumtech
  
-
-
----
-
-### ✅ Next Steps:
-- Replace `https://your-convex-url.convex.cloud` with your actual Convex URL
-- Add real Figma link and GitHub link if publishing
-- Drop screenshots if desired
